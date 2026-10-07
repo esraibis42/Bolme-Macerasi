@@ -27,8 +27,9 @@
         .bolme-cizgisi-sol {
             border-left: 4px solid #4ade80;
             border-bottom: 4px solid #4ade80;
-            padding-left: 10px;
+            padding-left: 15px;
             border-bottom-left-radius: 8px;
+            margin-left: 10px;
         }
         .aktif-adim {
             box-shadow: 0 0 15px 5px rgba(56, 189, 248, 0.6);
@@ -70,7 +71,7 @@
 
     <div class="relative z-10 w-full max-w-4xl px-4 flex flex-col md:flex-row gap-8">
         
-        <!-- Sol Panel (Görseller ve Animasyon) -->
+        <!-- Sol Panel -->
         <div class="bg-slate-800/80 backdrop-blur-md p-6 rounded-3xl border border-slate-600 flex-1 text-center flex flex-col justify-center">
             <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4">Lazer Hedefi ☄️</h1>
             <div id="gorev-mesaji" class="text-xl text-blue-300 font-semibold mb-6 h-16">
@@ -84,13 +85,22 @@
             </div>
         </div>
 
-        <!-- Sağ Panel (İşlem ve Tuşlar) -->
+        <!-- Sağ Panel -->
         <div class="bg-slate-800/80 backdrop-blur-md p-6 rounded-3xl border border-slate-600 flex-[1.5]">
             
             <div class="flex justify-center items-start text-4xl font-bold mb-10 mt-4">
-                <div class="mr-4 tracking-widest" id="bolunen-alan">84</div>
+                
+                <!-- YENİ EKLENEN: Alt alta çıkarma işlemlerinin gösterileceği font-mono alan -->
+                <div class="mr-2 flex flex-col items-end font-mono tracking-widest" style="font-size: 2.5rem; line-height: 1.3;">
+                    <div id="bolunen-alan">84</div>
+                    <div id="cikan-1" class="hidden text-red-400 border-b-2 border-slate-500 w-full text-right pb-1"></div>
+                    <div id="kalan-1" class="hidden text-blue-300 w-full text-right pt-1"></div>
+                    <div id="cikan-2" class="hidden text-red-400 border-b-2 border-slate-500 w-full text-right pb-1"></div>
+                    <div id="kalan-2" class="hidden text-green-400 w-full text-right pt-1"></div>
+                </div>
+
                 <div class="bolme-cizgisi-sol pl-4">
-                    <div class="text-red-400 mb-2" id="bolen-alan">4</div>
+                    <div class="text-red-400 mb-2 font-mono tracking-widest" id="bolen-alan" style="font-size: 2.5rem;">4</div>
                     <div id="bolum-hedef" class="border-t-2 border-slate-500 pt-2 flex p-2 rounded-lg aktif-adim">
                         <div id="kutu-1" class="hedef-kutu"></div>
                         <div id="kutu-2" class="hedef-kutu"></div>
@@ -111,7 +121,6 @@
                 </button>
             </div>
 
-            <!-- Tıklanabilir Sayı Tuşları -->
             <div class="grid grid-cols-5 gap-3 bg-slate-900 p-4 rounded-2xl border border-slate-700 w-full">
                 <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(0)">0</button>
                 <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(1)">1</button>
@@ -128,7 +137,6 @@
     </div>
 
     <script>
-        // Uzay Arkaplanı Yıldızları
         const uzay = document.getElementById('uzay-arkaplan');
         for(let i = 0; i < 50; i++) {
             let yildiz = document.createElement('div');
@@ -147,7 +155,6 @@
         let guncelBolen = 0;
         let guncelBolunen = 0;
 
-        // Sayıya Tıklama Fonksiyonu
         function sayiTikladi(rakam) {
             if(adim === 1) {
                 mevcutKutuDegeri[0] = rakam;
@@ -199,6 +206,12 @@
             document.getElementById('bolen-alan').innerText = guncelBolen;
             document.getElementById('bolunen-alan').innerText = guncelBolunen;
             
+            // Çıkarma kısımlarını gizle ve temizle
+            document.getElementById('cikan-1').classList.add('hidden');
+            document.getElementById('kalan-1').classList.add('hidden');
+            document.getElementById('cikan-2').classList.add('hidden');
+            document.getElementById('kalan-2').classList.add('hidden');
+
             document.getElementById('kutu-1').innerText = '';
             document.getElementById('kutu-1').classList.remove('dolu');
             document.getElementById('kutu-2').innerText = '';
@@ -230,9 +243,30 @@
 
                 if(mevcutKutuDegeri[0] === dogruCevaplar[0]) {
                     atesEtAnimasyonu(false);
-                    islemMesaji.innerText = `Harika! Şimdi kalan kısımda kaç tane ${guncelBolen} olduğunu bul.`;
+                    islemMesaji.innerText = `Harika! Çıkarma yapıldı. Şimdi kalan kısımda kaç tane ${guncelBolen} var? İkinci sayıyı seç!`;
                     islemMesaji.className = 'text-green-400 mb-4 font-medium text-lg text-center h-12 w-full';
                     gorevMesaji.innerText = "Hedef Vuruldu! Yeni Hedef...";
+                    
+                    // YENİ: 1. Adım Çarpma ve Çıkarma Gösterimi
+                    let cikan1Deger = mevcutKutuDegeri[0] * guncelBolen;
+                    // Birler basamağının altı boş kalacağı için görünmez bir sıfır ekliyoruz
+                    document.getElementById('cikan-1').innerHTML = `-${cikan1Deger}<span class="opacity-0">0</span>`;
+                    document.getElementById('cikan-1').classList.remove('hidden');
+                    
+                    let bolunenIlkKisim = Math.floor(guncelBolunen / 10);
+                    let kalan1Deger = bolunenIlkKisim - cikan1Deger;
+                    let indirilenDeger = guncelBolunen % 10;
+                    
+                    let kalan1Metin = "";
+                    if(kalan1Deger === 0) {
+                        kalan1Metin = "0" + indirilenDeger.toString(); // Örn: 04
+                    } else {
+                        kalan1Metin = kalan1Deger.toString() + indirilenDeger.toString(); // Örn: 12
+                    }
+                    
+                    document.getElementById('kalan-1').innerHTML = kalan1Metin;
+                    document.getElementById('kalan-1').classList.remove('hidden');
+
                     adim = 2;
                 } else {
                     islemMesaji.innerText = `Hata! Girdiğin sayı yanlış. Başka bir rakam seç.`;
@@ -251,6 +285,20 @@
                     islemMesaji.className = 'text-green-400 mb-4 font-medium text-lg text-center h-12 w-full';
                     gorevMesaji.innerText = "Görev Başarıyla Tamamlandı! 🏆";
                     
+                    // YENİ: 2. Adım Çarpma ve Çıkarma Gösterimi
+                    let cikan2Deger = mevcutKutuDegeri[1] * guncelBolen;
+                    let cikan2Metin = `-${cikan2Deger}`;
+                    let kalan1Metin = document.getElementById('kalan-1').innerHTML;
+                    if(cikan2Deger < 10 && kalan1Metin.length === 2) {
+                        cikan2Metin = `-0${cikan2Deger}`;
+                    }
+
+                    document.getElementById('cikan-2').innerHTML = cikan2Metin;
+                    document.getElementById('cikan-2').classList.remove('hidden');
+                    
+                    document.getElementById('kalan-2').innerHTML = "0";
+                    document.getElementById('kalan-2').classList.remove('hidden');
+
                     document.getElementById('btn-kontrol').style.display = 'none';
                     document.getElementById('btn-yeni').style.display = 'inline-block';
                 } else {
