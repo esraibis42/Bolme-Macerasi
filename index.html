@@ -14,7 +14,6 @@
             overflow-x: hidden;
             min-height: 100vh;
         }
-        /* Uzay Arka Plan Efekti */
         .yildiz {
             position: absolute;
             background: white;
@@ -25,23 +24,17 @@
             0% { opacity: 0.3; transform: scale(0.8); }
             100% { opacity: 1; transform: scale(1.2); }
         }
-        
-        /* Klasik Bölme Tahtası Çizgileri */
         .bolme-cizgisi-sol {
             border-left: 4px solid #4ade80;
             border-bottom: 4px solid #4ade80;
             padding-left: 10px;
             border-bottom-left-radius: 8px;
         }
-        
-        /* Adım Vurguları (Signaling) */
         .aktif-adim {
             box-shadow: 0 0 15px 5px rgba(56, 189, 248, 0.6);
             border: 2px dashed #38bdf8;
             background-color: rgba(56, 189, 248, 0.1);
         }
-
-        /* Sürükle Bırak Taşları */
         .sayi-tasi {
             cursor: grab;
             transition: transform 0.2s;
@@ -77,55 +70,50 @@
 
     <div class="relative z-10 w-full max-w-4xl px-4 flex flex-col md:flex-row gap-8">
         
-        <!-- Sol Panel: Görev ve Animasyon -->
+        <!-- Sol Panel -->
         <div class="bg-slate-800/80 backdrop-blur-md p-6 rounded-3xl border border-slate-600 flex-1 text-center flex flex-col justify-center">
             <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4">Lazer Hedefi ☄️</h1>
             <div id="gorev-mesaji" class="text-xl text-blue-300 font-semibold mb-6 h-16">
                 Görev Bekleniyor...
             </div>
             
-            <!-- Asteroid ve Gemi Görseli -->
             <div class="relative h-40 bg-slate-900 rounded-2xl overflow-hidden border-2 border-slate-700 flex flex-col items-center justify-between p-4">
                 <div id="asteroid" class="text-5xl transition-transform duration-300">🪨</div>
-                <!-- Lazer Efekti -->
                 <div id="lazer" class="w-1 h-0 bg-red-500 hidden mx-auto shadow-[0_0_15px_red]"></div>
                 <div id="gemi" class="text-4xl z-10">🚀</div>
             </div>
         </div>
 
-        <!-- Sağ Panel: Bölme Tahtası -->
+        <!-- Sağ Panel -->
         <div class="bg-slate-800/80 backdrop-blur-md p-6 rounded-3xl border border-slate-600 flex-[1.5]">
             
-            <div class="flex justify-center items-start text-4xl font-bold mb-10">
-                <!-- Bölünen -->
+            <div class="flex justify-center items-start text-4xl font-bold mb-10 mt-4">
                 <div class="mr-4 tracking-widest" id="bolunen-alan">84</div>
-                
-                <!-- Çizgi ve Bölen/Bölüm -->
                 <div class="bolme-cizgisi-sol pl-4">
-                    <!-- Bölen -->
                     <div class="text-red-400 mb-2" id="bolen-alan">4</div>
-                    <!-- Bölüm (Hedef Kutular) -->
                     <div id="bolum-hedef" class="border-t-2 border-slate-500 pt-2 flex aktif-adim p-2 rounded-lg">
-                        <div class="hedef-kutu" ondragover="allowDrop(event)" ondrop="drop(event, 'bolum', 0)"></div>
-                        <div class="hedef-kutu" ondragover="allowDrop(event)" ondrop="drop(event, 'bolum', 1)"></div>
+                        <div class="hedef-kutu" ondragover="allowDrop(event)" ondrop="drop(event, 0)"></div>
+                        <div class="hedef-kutu" ondragover="allowDrop(event)" ondrop="drop(event, 1)"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Adım Adım İşlem Alanı -->
             <div class="flex flex-col items-center">
                 <div id="islem-mesaji" class="text-yellow-400 mb-4 font-medium text-lg text-center h-12">
-                    1. Adım: 8'in içinde kaç tane 4 var? Doğru sayıyı bölüme sürükle!
+                    1. Adım: 8'in içinde kaç tane 4 var? İlk kutuya sürükle!
                 </div>
                 
-                <button onclick="adimKontrol()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-xl shadow-lg mb-6 transition duration-200">
+                <!-- Butonlar -->
+                <button id="btn-kontrol" onclick="adimKontrol()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-xl shadow-lg mb-6 transition duration-200">
                     Adımı Kontrol Et ✔️
+                </button>
+                <button id="btn-yeni" onclick="yeniSoru()" class="hidden bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-xl shadow-lg mb-6 transition duration-200">
+                    Sıradaki Görev 🚀
                 </button>
             </div>
 
-            <!-- Sayı Taşları (Drag & Drop) -->
+            <!-- Sayı Taşları -->
             <div class="grid grid-cols-5 gap-3 bg-slate-900 p-4 rounded-2xl border border-slate-700">
-                <!-- 0-9 Arası Taşlar -->
                 <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">0</div>
                 <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">1</div>
                 <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">2</div>
@@ -141,7 +129,6 @@
     </div>
 
     <script>
-        // Uzay Arkaplanı Animasyonu
         const uzay = document.getElementById('uzay-arkaplan');
         for(let i = 0; i < 50; i++) {
             let yildiz = document.createElement('div');
@@ -156,18 +143,13 @@
 
         let adim = 1;
         let mevcutKutuDegeri = [null, null];
-        const dogruCevaplar = [2, 1]; // 84 / 4 işlemi için cevaplar (2 ve 1)
+        let dogruCevaplar = [];
+        let guncelBolen = 0;
+        let guncelBolunen = 0;
 
-        // Sürükle Bırak (Drag & Drop) Olayları
-        function allowDrop(ev) {
-            ev.preventDefault();
-        }
-
-        function drag(ev) {
-            ev.dataTransfer.setData("text", ev.target.innerText);
-        }
-
-        function drop(ev, alan, index) {
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.innerText); }
+        function drop(ev, index) {
             ev.preventDefault();
             let data = ev.dataTransfer.getData("text");
             ev.target.innerText = data;
@@ -175,8 +157,7 @@
             mevcutKutuDegeri[index] = parseInt(data);
         }
 
-        // Animasyon ve Lazer Ateşleme
-        function atesEtAnimasyonu() {
+        function atesEtAnimasyonu(sonAdimMi) {
             const lazer = document.getElementById('lazer');
             const asteroid = document.getElementById('asteroid');
             
@@ -188,46 +169,46 @@
                 asteroid.style.transform = 'scale(0) rotate(180deg)';
                 lazer.style.display = 'none';
                 
-                confetti({
-                    particleCount: 50,
-                    spread: 60,
-                    origin: { y: 0.3, x: 0.2 }
-                });
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.3, x: 0.2 } });
 
                 setTimeout(() => {
-                    asteroid.innerText = '🛸'; // İkinci adım için yeni hedef
-                    asteroid.style.transform = 'scale(1) rotate(0deg)';
+                    if(!sonAdimMi) {
+                        asteroid.innerText = '🛸';
+                        asteroid.style.transform = 'scale(1) rotate(0deg)';
+                    }
                 }, 1000);
             }, 300);
         }
 
-        function adimKontrol() {
-            const islemMesaji = document.getElementById('islem-mesaji');
-            const gorevMesaji = document.getElementById('gorev-mesaji');
+        function yeniSoru() {
+            // Rastgele sayılar üret (Bölüm her zaman 2 basamaklı olacak)
+            guncelBolen = Math.floor(Math.random() * 8) + 2; // 2-9
+            let bolumOnlar = Math.floor(Math.random() * 9) + 1; // 1-9
+            let bolumBirler = Math.floor(Math.random() * 10); // 0-9
+            let tamBolum = (bolumOnlar * 10) + bolumBirler;
+            
+            guncelBolunen = guncelBolen * tamBolum;
+            dogruCevaplar = [bolumOnlar, bolumBirler];
+            adim = 1;
+            mevcutKutuDegeri = [null, null];
 
-            if(adim === 1) {
-                if(mevcutKutuDegeri[0] === dogruCevaplar[0]) {
-                    atesEtAnimasyonu();
-                    islemMesaji.innerText = "Süper! 8'in içinde 4, 2 defa var. Şimdi 2. Adım: 4'ün içinde kaç tane 4 var? İkinci kutuya sürükle.";
-                    islemMesaji.classList.replace('text-yellow-400', 'text-green-400');
-                    gorevMesaji.innerText = "Hedef Vuruldu! Yeni Hedef Geliyor...";
-                    adim = 2;
-                } else {
-                    islemMesaji.innerText = "Hata! 8'in içinde " + (mevcutKutuDegeri[0] || "?") + " tane 4 yok. Tekrar düşün.";
-                    islemMesaji.classList.replace('text-yellow-400', 'text-red-400');
-                }
-            } else if(adim === 2) {
-                if(mevcutKutuDegeri[1] === dogruCevaplar[1]) {
-                    atesEtAnimasyonu();
-                    islemMesaji.innerText = "Tebrikler! İşlemi başarıyla tamamladın: 84 ÷ 4 = 21";
-                    islemMesaji.classList.replace('text-red-400', 'text-green-400');
-                    gorevMesaji.innerText = "Görev Başarıyla Tamamlandı! 🏆";
-                } else {
-                    islemMesaji.innerText = "Biraz yaklaştın ama 4'ün içinde " + (mevcutKutuDegeri[1] || "?") + " tane 4 yok.";
-                    islemMesaji.classList.replace('text-green-400', 'text-red-400');
-                }
-            }
-        }
-    </script>
-</body>
-</html>
+            // Arayüzü güncelle
+            document.getElementById('bolen-alan').innerText = guncelBolen;
+            document.getElementById('bolunen-alan').innerText = guncelBolunen;
+            
+            const kutular = document.querySelectorAll('.hedef-kutu');
+            kutular.forEach(kutu => {
+                kutu.innerText = '';
+                kutu.classList.remove('dolu');
+            });
+
+            document.getElementById('btn-kontrol').style.display = 'inline-block';
+            document.getElementById('btn-yeni').style.display = 'none';
+            document.getElementById('gorev-mesaji').innerText = "Görev Bekleniyor...";
+            document.getElementById('asteroid').innerText = '🪨';
+            document.getElementById('asteroid').style.transform = 'scale(1) rotate(0deg)';
+            
+            // İlk adımı metne dök (Örn: 126 sayısının ilk kısmı "12"dir)
+            let ilkKisim = String(guncelBolunen).substring(0, String(guncelBolunen).length - 1);
+            let islemMesaji = document.getElementById('islem-mesaji');
+            islemMesaji.innerText =
