@@ -34,14 +34,15 @@
             box-shadow: 0 0 15px 5px rgba(56, 189, 248, 0.6);
             border: 2px dashed #38bdf8;
             background-color: rgba(56, 189, 248, 0.1);
+            transition: all 0.3s;
         }
         .sayi-tasi {
-            cursor: grab;
-            transition: transform 0.2s;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
         }
         .sayi-tasi:active {
-            cursor: grabbing;
-            transform: scale(1.1);
+            transform: scale(0.90);
+            background-color: #4ade80 !important;
         }
         .hedef-kutu {
             width: 40px;
@@ -70,7 +71,7 @@
 
     <div class="relative z-10 w-full max-w-4xl px-4 flex flex-col md:flex-row gap-8">
         
-        <!-- Sol Panel -->
+        <!-- Sol Panel (Görseller ve Animasyon) -->
         <div class="bg-slate-800/80 backdrop-blur-md p-6 rounded-3xl border border-slate-600 flex-1 text-center flex flex-col justify-center">
             <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-4">Lazer Hedefi ☄️</h1>
             <div id="gorev-mesaji" class="text-xl text-blue-300 font-semibold mb-6 h-16">
@@ -84,131 +85,24 @@
             </div>
         </div>
 
-        <!-- Sağ Panel -->
+        <!-- Sağ Panel (İşlem ve Tuşlar) -->
         <div class="bg-slate-800/80 backdrop-blur-md p-6 rounded-3xl border border-slate-600 flex-[1.5]">
             
             <div class="flex justify-center items-start text-4xl font-bold mb-10 mt-4">
                 <div class="mr-4 tracking-widest" id="bolunen-alan">84</div>
                 <div class="bolme-cizgisi-sol pl-4">
                     <div class="text-red-400 mb-2" id="bolen-alan">4</div>
-                    <div id="bolum-hedef" class="border-t-2 border-slate-500 pt-2 flex aktif-adim p-2 rounded-lg">
-                        <div class="hedef-kutu" ondragover="allowDrop(event)" ondrop="drop(event, 0)"></div>
-                        <div class="hedef-kutu" ondragover="allowDrop(event)" ondrop="drop(event, 1)"></div>
+                    <div id="bolum-hedef" class="border-t-2 border-slate-500 pt-2 flex p-2 rounded-lg aktif-adim">
+                        <div id="kutu-1" class="hedef-kutu"></div>
+                        <div id="kutu-2" class="hedef-kutu"></div>
                     </div>
                 </div>
             </div>
 
             <div class="flex flex-col items-center">
                 <div id="islem-mesaji" class="text-yellow-400 mb-4 font-medium text-lg text-center h-12">
-                    1. Adım: 8'in içinde kaç tane 4 var? İlk kutuya sürükle!
+                    1. Adım: İlk sayıyı aşağıdaki tuşlardan seç!
                 </div>
                 
-                <!-- Butonlar -->
-                <button id="btn-kontrol" onclick="adimKontrol()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-8 rounded-xl shadow-lg mb-6 transition duration-200">
-                    Adımı Kontrol Et ✔️
-                </button>
-                <button id="btn-yeni" onclick="yeniSoru()" class="hidden bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-8 rounded-xl shadow-lg mb-6 transition duration-200">
-                    Sıradaki Görev 🚀
-                </button>
-            </div>
-
-            <!-- Sayı Taşları -->
-            <div class="grid grid-cols-5 gap-3 bg-slate-900 p-4 rounded-2xl border border-slate-700">
-                <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">0</div>
-                <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">1</div>
-                <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">2</div>
-                <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">3</div>
-                <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">4</div>
-                <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">5</div>
-                <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">6</div>
-                <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">7</div>
-                <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">8</div>
-                <div class="sayi-tasi bg-slate-700 text-2xl font-bold rounded-xl h-14 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600" draggable="true" ondragstart="drag(event)">9</div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const uzay = document.getElementById('uzay-arkaplan');
-        for(let i = 0; i < 50; i++) {
-            let yildiz = document.createElement('div');
-            yildiz.className = 'yildiz';
-            yildiz.style.width = Math.random() * 3 + 'px';
-            yildiz.style.height = yildiz.style.width;
-            yildiz.style.left = Math.random() * 100 + 'vw';
-            yildiz.style.top = Math.random() * 100 + 'vh';
-            yildiz.style.animationDelay = Math.random() * 2 + 's';
-            uzay.appendChild(yildiz);
-        }
-
-        let adim = 1;
-        let mevcutKutuDegeri = [null, null];
-        let dogruCevaplar = [];
-        let guncelBolen = 0;
-        let guncelBolunen = 0;
-
-        function allowDrop(ev) { ev.preventDefault(); }
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.innerText); }
-        function drop(ev, index) {
-            ev.preventDefault();
-            let data = ev.dataTransfer.getData("text");
-            ev.target.innerText = data;
-            ev.target.classList.add("dolu");
-            mevcutKutuDegeri[index] = parseInt(data);
-        }
-
-        function atesEtAnimasyonu(sonAdimMi) {
-            const lazer = document.getElementById('lazer');
-            const asteroid = document.getElementById('asteroid');
-            
-            lazer.style.display = 'block';
-            lazer.style.height = '100px';
-            lazer.style.transition = 'height 0.2s';
-            
-            setTimeout(() => {
-                asteroid.style.transform = 'scale(0) rotate(180deg)';
-                lazer.style.display = 'none';
-                
-                confetti({ particleCount: 50, spread: 60, origin: { y: 0.3, x: 0.2 } });
-
-                setTimeout(() => {
-                    if(!sonAdimMi) {
-                        asteroid.innerText = '🛸';
-                        asteroid.style.transform = 'scale(1) rotate(0deg)';
-                    }
-                }, 1000);
-            }, 300);
-        }
-
-        function yeniSoru() {
-            // Rastgele sayılar üret (Bölüm her zaman 2 basamaklı olacak)
-            guncelBolen = Math.floor(Math.random() * 8) + 2; // 2-9
-            let bolumOnlar = Math.floor(Math.random() * 9) + 1; // 1-9
-            let bolumBirler = Math.floor(Math.random() * 10); // 0-9
-            let tamBolum = (bolumOnlar * 10) + bolumBirler;
-            
-            guncelBolunen = guncelBolen * tamBolum;
-            dogruCevaplar = [bolumOnlar, bolumBirler];
-            adim = 1;
-            mevcutKutuDegeri = [null, null];
-
-            // Arayüzü güncelle
-            document.getElementById('bolen-alan').innerText = guncelBolen;
-            document.getElementById('bolunen-alan').innerText = guncelBolunen;
-            
-            const kutular = document.querySelectorAll('.hedef-kutu');
-            kutular.forEach(kutu => {
-                kutu.innerText = '';
-                kutu.classList.remove('dolu');
-            });
-
-            document.getElementById('btn-kontrol').style.display = 'inline-block';
-            document.getElementById('btn-yeni').style.display = 'none';
-            document.getElementById('gorev-mesaji').innerText = "Görev Bekleniyor...";
-            document.getElementById('asteroid').innerText = '🪨';
-            document.getElementById('asteroid').style.transform = 'scale(1) rotate(0deg)';
-            
-            // İlk adımı metne dök (Örn: 126 sayısının ilk kısmı "12"dir)
-            let ilkKisim = String(guncelBolunen).substring(0, String(guncelBolunen).length - 1);
-            let islemMesaji = document.getElementById('islem-mesaji');
-            islemMesaji.innerText =
+                <button id="btn-kontrol" onclick="adimKontrol()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-10 rounded-xl shadow-lg mb-6 transition duration-200">
+                    Adımı Kontrol Et
