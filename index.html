@@ -3,129 +3,186 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bölme İşlemi Keşfi</title>
-    <!-- Tasarım ve Animasyon Kütüphaneleri -->
+    <title>Uzayda Bölme Görevi</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        /* İşaretleme İlkesi: Zihinsel Eşleşme İçin Renk Kodları */
-        .bolunen { color: #3b82f6; font-weight: bold; } /* Mavi */
-        .bolen { color: #ef4444; font-weight: bold; } /* Kırmızı */
-        .bolum { color: #22c55e; font-weight: bold; } /* Yeşil */
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        .yildiz {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: parla 2s infinite alternate;
+        }
+        @keyframes parla {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+        /* Renk Kodlamaları (İşaretleme İlkesi) */
+        .bolunen { color: #38bdf8; text-shadow: 0 0 10px #38bdf888; } /* Neon Mavi */
+        .bolen { color: #f87171; text-shadow: 0 0 10px #f8717188; } /* Neon Kırmızı */
+        .bolum { color: #4ade80; text-shadow: 0 0 10px #4ade8088; } /* Neon Yeşil */
+        
+        #roket-pisti {
+            position: relative;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            margin: 20px 0;
+        }
+        #roket {
+            position: absolute;
+            top: -15px;
+            left: 0%;
+            font-size: 2rem;
+            transition: left 0.5s ease-in-out;
+        }
     </style>
 </head>
-<body class="bg-blue-50 min-h-screen flex flex-col items-center justify-center p-4 font-sans">
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-    <div class="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full text-center border-t-4 border-blue-400">
-        <h1 class="text-2xl font-bold text-gray-700 mb-6">Bölme Macerası 🚀</h1>
+    <!-- Uzay Efekti Arka Plan -->
+    <div id="uzay-arkaplan" class="absolute inset-0 z-0 pointer-events-none"></div>
+
+    <div class="relative z-10 bg-slate-800/80 backdrop-blur-md p-8 rounded-3xl shadow-2xl border border-slate-600 max-w-lg w-full text-center">
+        <h1 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 mb-2">Uzayda Bölme Görevi 🚀</h1>
+        <p class="text-slate-400 mb-6 text-sm">Roketin hedefe ulaşması için yakıt tankını doğru hesapla!</p>
         
-        <!-- Seviye Seçimi -->
-        <div class="mb-4">
-            <select id="level" class="p-2 border rounded-lg w-full text-gray-600 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400" onchange="yeniSoru()">
-                <option value="kolay">Başlangıç (2 Basamaklı)</option>
-                <option value="orta">Orta (3 Basamaklı)</option>
-            </select>
+        <!-- Oyunlaştırma: Roket İlerleme Çubuğu -->
+        <div class="w-full px-2 mb-8">
+            <div class="flex justify-between text-xs text-slate-400 mb-1">
+                <span>Dünya 🌍</span>
+                <span>Mars 🔴</span>
+            </div>
+            <div id="roket-pisti">
+                <div id="roket">🚀</div>
+            </div>
+            <div class="text-sm font-semibold text-yellow-400 mt-4">
+                Toplanan Enerji: <span id="seri">0</span> / 5
+            </div>
         </div>
 
-        <!-- Seri Takibi -->
-        <div class="text-sm font-semibold text-orange-500 mb-4 bg-orange-100 p-2 rounded-lg">
-            🔥 Arka Arkaya Doğru: <span id="seri">0</span>
+        <div class="mb-6 flex justify-center items-center space-x-4 bg-slate-900/50 p-6 rounded-2xl border border-slate-700">
+            <span id="bolunenGosterge" class="text-5xl font-bold bolunen"></span>
+            <span class="text-3xl text-slate-500">÷</span>
+            <span id="bolenGosterge" class="text-5xl font-bold bolen"></span>
+            <span class="text-3xl text-slate-500">=</span>
+            <span class="text-5xl font-bold bolum">?</span>
         </div>
 
-        <!-- İşlem Tahtası -->
-        <div class="text-4xl mb-6 flex justify-center items-center space-x-4">
-            <span id="bolunenGosterge" class="bolunen"></span>
-            <span class="text-gray-400">÷</span>
-            <span id="bolenGosterge" class="bolen"></span>
-            <span class="text-gray-400">=</span>
-            <span class="bolum">?</span>
+        <div id="mesaj" class="text-lg font-medium text-slate-300 mb-6 h-12 flex items-center justify-center transition-all">
+            Görev Başlıyor! Bölümü hesapla.
         </div>
 
-        <!-- Yönlendirici Dönüt Alanı -->
-        <div id="mesaj" class="text-lg font-medium text-gray-600 mb-4 h-16 flex items-center justify-center">
-            İşlemin sonucunu aşağıya yaz!
-        </div>
-
-        <!-- Girdi Alanı ve Butonlar -->
-        <input type="number" id="cevap" class="w-full text-center text-2xl p-3 border-2 rounded-xl mb-4 focus:outline-none focus:border-green-400" placeholder="Bölüm kaçtır?">
+        <input type="number" id="cevap" class="w-full text-center text-3xl p-4 bg-slate-900 border-2 border-slate-600 rounded-2xl mb-4 text-white focus:outline-none focus:border-blue-500 shadow-inner" placeholder="Cevap...">
         
-        <button onclick="kontrolEt()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-xl transition duration-200 text-lg shadow-md mb-3">
-            Kontrol Et ✔️
-        </button>
-        <button onclick="yeniSoru()" class="w-full bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-xl transition duration-200 text-md shadow-sm">
-            Yeni Soru 🔄
+        <button onclick="kontrolEt()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-bold py-4 px-4 rounded-2xl transition duration-300 text-xl shadow-[0_0_15px_rgba(34,197,94,0.4)] mb-4">
+            Ateşle! 💥
         </button>
     </div>
 
-    <!-- İşlem Mantığı ve Tuş Fonksiyonları -->
     <script>
+        // Arka plana rastgele yıldızlar ekle
+        const uzay = document.getElementById('uzay-arkaplan');
+        for(let i = 0; i < 50; i++) {
+            let yildiz = document.createElement('div');
+            yildiz.className = 'yildiz';
+            yildiz.style.width = Math.random() * 3 + 'px';
+            yildiz.style.height = yildiz.style.width;
+            yildiz.style.left = Math.random() * 100 + 'vw';
+            yildiz.style.top = Math.random() * 100 + 'vh';
+            yildiz.style.animationDelay = Math.random() * 2 + 's';
+            uzay.appendChild(yildiz);
+        }
+
         let mevcutBolunen = 0;
         let mevcutBolen = 0;
         let dogruCevap = 0;
-        let seri = 0;
+        let ilerleme = 0; // 0'dan 5'e kadar
 
         function yeniSoru() {
-            const seviye = document.getElementById("level").value;
             document.getElementById("cevap").value = "";
-            
-            if(seviye === "kolay") {
-                mevcutBolen = Math.floor(Math.random() * 8) + 2; // 2 ile 9 arası bölen
-                dogruCevap = Math.floor(Math.random() * 9) + 1;  // 1 ile 9 arası bölüm
-                mevcutBolunen = mevcutBolen * dogruCevap;
-            } else {
-                mevcutBolen = Math.floor(Math.random() * 8) + 2; 
-                dogruCevap = Math.floor(Math.random() * 90) + 10; // 10 ile 99 arası bölüm
-                mevcutBolunen = mevcutBolen * dogruCevap;
-            }
+            const inputAlan = document.getElementById("cevap");
+            inputAlan.classList.remove('animate__animated', 'animate__shakeX');
+
+            mevcutBolen = Math.floor(Math.random() * 8) + 2; 
+            dogruCevap = Math.floor(Math.random() * 12) + 2; 
+            mevcutBolunen = mevcutBolen * dogruCevap;
 
             document.getElementById("bolunenGosterge").innerText = mevcutBolunen;
             document.getElementById("bolenGosterge").innerText = mevcutBolen;
             
-            // Soru cümlesini renklendirerek kur
             document.getElementById("mesaj").innerHTML = "Sence <span class='bolunen'>" + mevcutBolunen + "</span> sayısının içinde kaç tane <span class='bolen'>" + mevcutBolen + "</span> var?";
-            document.getElementById("mesaj").style.color = "#4b5563"; 
         }
 
         function kontrolEt() {
             const kullaniciCevabi = parseInt(document.getElementById("cevap").value);
             const mesajAlani = document.getElementById("mesaj");
+            const inputAlan = document.getElementById("cevap");
+            const roket = document.getElementById("roket");
+
+            inputAlan.classList.remove('animate__animated', 'animate__shakeX');
 
             if (isNaN(kullaniciCevabi)) {
-                mesajAlani.innerText = "Lütfen bir sayı gir! 🤔";
-                mesajAlani.style.color = "#f59e0b"; 
+                mesajAlani.innerText = "Önce yakıt miktarını (sayı) girmelisin! 🛸";
                 return;
             }
 
             if (kullaniciCevabi === dogruCevap) {
-                mesajAlani.innerHTML = "Harika! Doğru bildin. 🎉";
-                mesajAlani.style.color = "#22c55e"; 
-                seri++;
-                document.getElementById("seri").innerText = seri;
+                ilerleme++;
+                document.getElementById("seri").innerText = ilerleme;
                 
-                // Başarı anında konfeti patlat
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
+                // Roketi hareket ettir (Her doğruda %20 ileri)
+                let yuzde = (ilerleme / 5) * 100;
+                roket.style.left = yuzde + '%';
 
-                // 3 saniye bekleyip yeni soruya geç
-                setTimeout(yeniSoru, 3000); 
-            } else {
-                seri = 0; // Hata yaparsa seri sıfırlanır
-                document.getElementById("seri").innerText = seri;
-                
-                // Pedagojik, yumuşak hata dönütleri
-                if (kullaniciCevabi > dogruCevap) {
-                    mesajAlani.innerHTML = "Biraz fazla söyledin. <span class='bolunen'>" + mevcutBolunen + "</span>'in içine sığması için daha küçük bir sayı düşünmelisin! 👇";
+                mesajAlani.innerHTML = "Doğru Rota! 🌟";
+                mesajAlani.style.color = "#4ade80";
+
+                confetti({ particleCount: 50, spread: 40, origin: { y: 0.8 }, colors: ['#38bdf8', '#f87171', '#4ade80'] });
+
+                if (ilerleme >= 5) {
+                    mesajAlani.innerHTML = "Tebrikler! Mars'a başarıyla ulaştın! 🔴🚀";
+                    confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+                    setTimeout(() => {
+                        ilerleme = 0;
+                        roket.style.left = '0%';
+                        document.getElementById("seri").innerText = ilerleme;
+                        yeniSoru();
+                    }, 4000);
                 } else {
-                    mesajAlani.innerHTML = "Biraz az oldu sanki. İçinde daha fazla <span class='bolen'>" + mevcutBolen + "</span> var, tekrar dene! 👇";
+                    setTimeout(() => {
+                        mesajAlani.style.color = "#cbd5e1";
+                        yeniSoru();
+                    }, 1500);
                 }
-                mesajAlani.style.color = "#ef4444"; 
+            } else {
+                // Hata durumu (Görsel sarsıntı efekti eklendi)
+                inputAlan.classList.add('animate__animated', 'animate__shakeX');
+                
+                if (kullaniciCevabi > dogruCevap) {
+                    mesajAlani.innerHTML = "Yakıt çok fazla! Daha küçük bir sayı dene. 📉";
+                } else {
+                    mesajAlani.innerHTML = "Yakıt yetersiz! Daha büyük bir sayı dene. 📈";
+                }
+                mesajAlani.style.color = "#f87171";
             }
         }
 
-        // Sayfa ilk açıldığında otomatik soru üret
+        // Enter tuşuyla da kontrol edebilme
+        document.getElementById("cevap").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                kontrolEt();
+            }
+        });
+
         window.onload = yeniSoru;
     </script>
 </body>
