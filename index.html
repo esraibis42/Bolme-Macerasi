@@ -37,7 +37,6 @@
             transition: all 0.3s;
         }
         .sayi-tasi {
-            cursor: pointer;
             transition: transform 0.1s, background-color 0.2s;
         }
         .sayi-tasi:active {
@@ -99,10 +98,169 @@
                 </div>
             </div>
 
-            <div class="flex flex-col items-center">
-                <div id="islem-mesaji" class="text-yellow-400 mb-4 font-medium text-lg text-center h-12">
+            <div class="flex flex-col items-center w-full">
+                <div id="islem-mesaji" class="text-yellow-400 mb-4 font-medium text-lg text-center h-12 w-full">
                     1. Adım: İlk sayıyı aşağıdaki tuşlardan seç!
                 </div>
                 
                 <button id="btn-kontrol" onclick="adimKontrol()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-10 rounded-xl shadow-lg mb-6 transition duration-200">
-                    Adımı Kontrol Et
+                    Adımı Kontrol Et ✔️
+                </button>
+                <button id="btn-yeni" onclick="yeniSoru()" class="hidden bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-10 rounded-xl shadow-lg mb-6 transition duration-200">
+                    Sıradaki Görev 🚀
+                </button>
+            </div>
+
+            <!-- Tıklanabilir Sayı Tuşları -->
+            <div class="grid grid-cols-5 gap-3 bg-slate-900 p-4 rounded-2xl border border-slate-700 w-full">
+                <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(0)">0</button>
+                <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(1)">1</button>
+                <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(2)">2</button>
+                <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(3)">3</button>
+                <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(4)">4</button>
+                <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(5)">5</button>
+                <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(6)">6</button>
+                <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(7)">7</button>
+                <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(8)">8</button>
+                <button class="sayi-tasi bg-slate-700 text-white text-2xl font-bold rounded-xl h-16 flex items-center justify-center border-b-4 border-slate-900 hover:bg-slate-600 focus:outline-none" onclick="sayiTikladi(9)">9</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Uzay Arkaplanı Yıldızları
+        const uzay = document.getElementById('uzay-arkaplan');
+        for(let i = 0; i < 50; i++) {
+            let yildiz = document.createElement('div');
+            yildiz.className = 'yildiz';
+            yildiz.style.width = Math.random() * 3 + 'px';
+            yildiz.style.height = yildiz.style.width;
+            yildiz.style.left = Math.random() * 100 + 'vw';
+            yildiz.style.top = Math.random() * 100 + 'vh';
+            yildiz.style.animationDelay = Math.random() * 2 + 's';
+            uzay.appendChild(yildiz);
+        }
+
+        let adim = 1;
+        let mevcutKutuDegeri = [null, null];
+        let dogruCevaplar = [];
+        let guncelBolen = 0;
+        let guncelBolunen = 0;
+
+        // Sayıya Tıklama Fonksiyonu
+        function sayiTikladi(rakam) {
+            if(adim === 1) {
+                mevcutKutuDegeri[0] = rakam;
+                const kutu1 = document.getElementById('kutu-1');
+                kutu1.innerText = rakam;
+                kutu1.classList.add('dolu');
+            } else if(adim === 2) {
+                mevcutKutuDegeri[1] = rakam;
+                const kutu2 = document.getElementById('kutu-2');
+                kutu2.innerText = rakam;
+                kutu2.classList.add('dolu');
+            }
+        }
+
+        function atesEtAnimasyonu(sonAdimMi) {
+            const lazer = document.getElementById('lazer');
+            const asteroid = document.getElementById('asteroid');
+            
+            lazer.style.display = 'block';
+            lazer.style.height = '100px';
+            lazer.style.transition = 'height 0.2s';
+            
+            setTimeout(() => {
+                asteroid.style.transform = 'scale(0) rotate(180deg)';
+                lazer.style.display = 'none';
+                
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.3, x: 0.2 } });
+
+                setTimeout(() => {
+                    if(!sonAdimMi) {
+                        asteroid.innerText = '🛸';
+                        asteroid.style.transform = 'scale(1) rotate(0deg)';
+                    }
+                }, 1000);
+            }, 300);
+        }
+
+        function yeniSoru() {
+            guncelBolen = Math.floor(Math.random() * 8) + 2; 
+            let bolumOnlar = Math.floor(Math.random() * 9) + 1; 
+            let bolumBirler = Math.floor(Math.random() * 10); 
+            let tamBolum = (bolumOnlar * 10) + bolumBirler;
+            
+            guncelBolunen = guncelBolen * tamBolum;
+            dogruCevaplar = [bolumOnlar, bolumBirler];
+            adim = 1;
+            mevcutKutuDegeri = [null, null];
+
+            document.getElementById('bolen-alan').innerText = guncelBolen;
+            document.getElementById('bolunen-alan').innerText = guncelBolunen;
+            
+            document.getElementById('kutu-1').innerText = '';
+            document.getElementById('kutu-1').classList.remove('dolu');
+            document.getElementById('kutu-2').innerText = '';
+            document.getElementById('kutu-2').classList.remove('dolu');
+
+            document.getElementById('btn-kontrol').style.display = 'inline-block';
+            document.getElementById('btn-yeni').style.display = 'none';
+            document.getElementById('gorev-mesaji').innerText = "Görev Bekleniyor...";
+            
+            document.getElementById('asteroid').innerText = '🪨';
+            document.getElementById('asteroid').style.transform = 'scale(1) rotate(0deg)';
+            
+            let ilkKisim = String(guncelBolunen).substring(0, String(guncelBolunen).length - 1);
+            let islemMesaji = document.getElementById('islem-mesaji');
+            islemMesaji.innerText = `1. Adım: ${ilkKisim} içinde kaç tane ${guncelBolen} var? Tuşlardan sayıyı seç.`;
+            islemMesaji.className = 'text-yellow-400 mb-4 font-medium text-lg text-center h-12 w-full';
+        }
+
+        function adimKontrol() {
+            const islemMesaji = document.getElementById('islem-mesaji');
+            const gorevMesaji = document.getElementById('gorev-mesaji');
+
+            if(adim === 1) {
+                if(mevcutKutuDegeri[0] === null) {
+                    islemMesaji.innerText = "Lütfen önce aşağıdaki tuşlardan bir sayı seç!";
+                    islemMesaji.className = 'text-orange-400 mb-4 font-medium text-lg text-center h-12 w-full';
+                    return;
+                }
+
+                if(mevcutKutuDegeri[0] === dogruCevaplar[0]) {
+                    atesEtAnimasyonu(false);
+                    islemMesaji.innerText = `Harika! Şimdi kalan kısımda kaç tane ${guncelBolen} olduğunu bul.`;
+                    islemMesaji.className = 'text-green-400 mb-4 font-medium text-lg text-center h-12 w-full';
+                    gorevMesaji.innerText = "Hedef Vuruldu! Yeni Hedef...";
+                    adim = 2;
+                } else {
+                    islemMesaji.innerText = `Hata! Girdiğin sayı yanlış. Başka bir rakam seç.`;
+                    islemMesaji.className = 'text-red-400 mb-4 font-medium text-lg text-center h-12 w-full';
+                }
+            } else if(adim === 2) {
+                if(mevcutKutuDegeri[1] === null) {
+                    islemMesaji.innerText = "Lütfen ikinci kutu için bir sayı seç!";
+                    islemMesaji.className = 'text-orange-400 mb-4 font-medium text-lg text-center h-12 w-full';
+                    return;
+                }
+
+                if(mevcutKutuDegeri[1] === dogruCevaplar[1]) {
+                    atesEtAnimasyonu(true);
+                    islemMesaji.innerText = `Tebrikler Görev Bitti! ${guncelBolunen} ÷ ${guncelBolen} = ${dogruCevaplar[0]}${dogruCevaplar[1]}`;
+                    islemMesaji.className = 'text-green-400 mb-4 font-medium text-lg text-center h-12 w-full';
+                    gorevMesaji.innerText = "Görev Başarıyla Tamamlandı! 🏆";
+                    
+                    document.getElementById('btn-kontrol').style.display = 'none';
+                    document.getElementById('btn-yeni').style.display = 'inline-block';
+                } else {
+                    islemMesaji.innerText = `Biraz yaklaştın ama doğru cevap bu değil. Rakamı değiştir!`;
+                    islemMesaji.className = 'text-red-400 mb-4 font-medium text-lg text-center h-12 w-full';
+                }
+            }
+        }
+
+        window.onload = yeniSoru;
+    </script>
+</body>
+</html>
